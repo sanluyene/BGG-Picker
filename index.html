@@ -1,0 +1,55 @@
+<body ng-app="bggDecision" ng-controller="bggCtrl">
+  <div class="container">
+    <!-- Get the games -->
+    <div id="top" class="">
+      <h1>Board Game Decision Assistant</h1>
+
+      <p>Unsure of what game to play? Filter your&nbsp;<a href="https://www.boardgamegeek.com/">Board Game Geek</a>&nbsp;game collection based on your particular criteria.</p>
+
+      <div class="">
+        <label for="username">Enter the username of the user whose collection you would like to filter against:</label>
+        <input ng-model="username" type="text" placeholder="username"></input>
+      </div>
+
+      <button id="refresh" class="btn btn-success" ng-click="callBGG()">Find some games</button>
+    </div>
+
+    <!-- Display and filter the games -->
+    <div id="mid" class="row">
+      <div id="filters" class="col-md-4">
+        <!--
+          category
+          personal rating
+        -->
+        <h5>Filters</h5>
+        <p>
+          Number of players:&nbsp;
+          <select id="numPlayers" name="players">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7+</option>
+          </select>
+        </p>
+
+        <p>
+          Complexity:&nbsp;<span id="complexity-amount"></span>
+          <div id="complexity-range"></div>
+        </p>
+
+        <p>
+          Time Available (minutes):&nbsp;<span id="time-amount"></span>
+          <div id="time-range"></div>
+        </p>
+
+      </div>
+
+      <div id="results" class="col-md-8">
+        <p ng-repeat="x in collectionIds" class="col-md-2">{{x}}</p>
+      </div>
+    </div>
+  </div>
+</body>

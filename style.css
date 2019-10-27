@@ -1,0 +1,12 @@
+.red { background-color: #f00; }
+.green { background-color: #0f0; }
+.blue { background-color: #00f; }
+
+#mid {
+  margin-top: 25px;
+}
+
+#filters {
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+}
