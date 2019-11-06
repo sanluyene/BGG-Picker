@@ -11,7 +11,7 @@
 </head>
 
 <body ng-app="bggDecision" ng-controller="bggCtrl">
-  <div class="container">
+  <div class="container-fluid">
     <!-- Get the games -->
     <div id="top" class="">
       <h1>Board Game Decision Assistant</h1>
@@ -28,10 +28,11 @@
 
     <!-- Display and filter the games -->
     <div id="mid" class="row">
-      <div id="filters" class="col-md-4">
+      <div id="filters" class="col-md-4 col-sm-6 col-xs-12">
         <!--
           category
           personal rating
+          exclude expansions button?
         -->
         <h5>Filters</h5>
         <p>
@@ -59,8 +60,16 @@
 
       </div>
 
-      <div id="results" class="col-md-8">
-        <p ng-repeat="x in collectionIds" class="col-md-2">{{x}}</p>
+      <div id="results" class="col-md-8 col-sm-6 col-xs-12">
+        <div class="game col-md-4 col-sm-6 col-xs-12" ng-repeat="x in collection | filter:filterGames">
+          <img src="{{x.thumb}}" class="">
+          <div class="">
+            Name: <strong>{{x.name}}</strong><br />
+            Number of Players: <span ng-if="x.minPlayers == x.maxPlayers"><strong>{{x.minPlayers}}</strong></span><span ng-if="x.minPlayers != x.maxPlayers"><strong>{{x.minPlayers}} - {{x.maxPlayers}}</strong></span><br />
+            Time to Play: <span ng-if="x.minTime == x.maxTime"><strong>{{x.minTime}}</strong></span><span ng-if="x.minTime != x.maxTime"><strong>{{x.minTime}} - {{x.maxTime}}</strong></span> minutes<br />
+            Complexity: <strong>{{x.complexity}}</strong><br />
+          </div>
+        </div>
       </div>
     </div>
   </div>
