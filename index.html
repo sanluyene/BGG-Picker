@@ -16,7 +16,8 @@
     <div id="top" class="">
       <h1>Board Game Decision Assistant</h1>
 
-      <p>Unsure of what game to play? Filter your&nbsp;<a href="https://www.boardgamegeek.com/">Board Game Geek</a>&nbsp;game collection based on your particular criteria.</p>
+      <p>Unsure of what game to play? Filter your&nbsp;<a href="https://www.boardgamegeek.com/">Board Game
+          Geek</a>&nbsp;game collection based on your particular criteria.</p>
 
       <div class="">
         <label for="username">Enter the username of the user whose collection you would like to filter against:</label>
@@ -65,8 +66,10 @@
           <img src="{{x.thumb}}" class="">
           <div class="">
             Name: <strong>{{x.name}}</strong><br />
-            Number of Players: <span ng-if="x.minPlayers == x.maxPlayers"><strong>{{x.minPlayers}}</strong></span><span ng-if="x.minPlayers != x.maxPlayers"><strong>{{x.minPlayers}} - {{x.maxPlayers}}</strong></span><br />
-            Time to Play: <span ng-if="x.minTime == x.maxTime"><strong>{{x.minTime}}</strong></span><span ng-if="x.minTime != x.maxTime"><strong>{{x.minTime}} - {{x.maxTime}}</strong></span> minutes<br />
+            Number of Players: <span ng-if="x.minPlayers == x.maxPlayers"><strong>{{x.minPlayers}}</strong></span><span
+              ng-if="x.minPlayers != x.maxPlayers"><strong>{{x.minPlayers}} - {{x.maxPlayers}}</strong></span><br />
+            Time to Play: <span ng-if="x.minTime == x.maxTime"><strong>{{x.minTime}}</strong></span><span
+              ng-if="x.minTime != x.maxTime"><strong>{{x.minTime}} - {{x.maxTime}}</strong></span> minutes<br />
             Complexity: <strong>{{x.complexity}}</strong><br />
           </div>
         </div>
