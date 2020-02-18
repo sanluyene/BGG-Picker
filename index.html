@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html ng-app="bggDecision">
+
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex">
@@ -6,14 +9,15 @@
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="style.css">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
   <script src="script.js"></script>
 </head>
 
-<body ng-app="bggDecision" ng-controller="bggCtrl">
-  <div class="container-fluid">
+<body>
+  <div ng-controller="bggCtrl" class="container-fluid">
     <!-- Get the games -->
     <div id="top" class="">
       <h1>Board Game Decision Assistant</h1>
@@ -31,16 +35,11 @@
 
     <!-- Display and filter the games -->
     <div id="mid" class="row">
-      <div id="filters" class="col-md-4 col-sm-6 col-xs-12">
-        <!--
-          category
-          personal rating
-          exclude expansions button?
-        -->
+      <div id="filters" class="col-md-2 col-sm-5 col-xs-12">
         <h5>Filters</h5>
         <p>
           Number of players:&nbsp;
-          <select id="numPlayers" name="players">
+          <select id="numPlayers" name="players" ng-model="numPlayers">
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -52,33 +51,46 @@
         </p>
 
         <p>
-          Complexity:&nbsp;<span id="complexity-amount"></span>
-          <div id="complexity-range"></div>
+          Maximum Level of Complexity:&nbsp;{{complexity}}
+          <div slider id="complexity" ng-model="complexity"></div>
         </p>
 
         <p>
-          Time Available (minutes):&nbsp;<span id="time-amount"></span>
-          <div id="time-range"></div>
+          Time Available in minutes:&nbsp;{{time}}
+          <div slider id="time" ng-model="time"></div>
         </p>
 
-        <!-- TODO Exclude expansions option
-        item type ="boardgame" || "boardgameexpansion" -->
+        <p>
+          Include Expansions:&nbsp;
+          <input type="checkbox" id="expansions" name="expansions" ng-model="expansions">
+        </p>
+
+        <!-- TODO include personal rating filter -->
+        <!-- TODO include category filter -->
+        <!-- TODO "auto" pick for me from selection -->
+        <!-- TODO sorting feature -->
 
       </div>
 
-      <div id="results" class="col-md-8 col-sm-6 col-xs-12">
-        <div class="game col-md-4 col-sm-6 col-xs-12" ng-repeat="x in collection | filter:filterGames">
-          <img src="{{x.thumb}}" class="">
+      <!-- TODO create "sharable" link -->
+
+      <div id="results" class="col-md-10 col-sm-7 col-xs-12">
+        <div ng-if="collection.length > 0" class="game col-md-3 col-sm-6 col-xs-12" ng-repeat="game in collection | filterGames:numPlayers:complexity:time:expansions">
+          <div ng-if="game.thumb"><img src="{{game.thumb}}" class=""></div>
+          
           <div class="">
-            Name: <strong>{{x.name}}</strong><br />
-            Number of Players: <span ng-if="x.minPlayers == x.maxPlayers"><strong>{{x.minPlayers}}</strong></span><span
-              ng-if="x.minPlayers != x.maxPlayers"><strong>{{x.minPlayers}} - {{x.maxPlayers}}</strong></span><br />
-            Time to Play: <span ng-if="x.minTime == x.maxTime"><strong>{{x.minTime}}</strong></span><span
-              ng-if="x.minTime != x.maxTime"><strong>{{x.minTime}} - {{x.maxTime}}</strong></span> minutes<br />
-            Complexity: <strong>{{x.complexity}}</strong><br />
+            Name: <strong>{{game.name}}</strong><br />
+            Number of Players: <span ng-if="game.minPlayers == game.maxPlayers"><strong>{{game.minPlayers}}</strong></span><span
+              ng-if="game.minPlayers != game.maxPlayers"><strong>{{game.minPlayers}} - {{game.maxPlayers}}</strong></span><br />
+            Time to Play: <span ng-if="game.minTime == game.maxTime"><strong>{{game.minTime}}</strong></span><span
+              ng-if="game.minTime != game.maxTime"><strong>{{game.minTime}} - {{game.maxTime}}</strong></span> minutes<br />
+            Complexity: <strong>{{game.complexity}}</strong><br />
           </div>
-        </div>
+        </div ng-if="collection.length > 0">
       </div>
     </div>
+    
   </div>
 </body>
+
+</html>
