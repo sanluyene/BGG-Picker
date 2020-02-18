@@ -7,37 +7,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
 
   <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
-  <script src="script.js"></script>
+  <script src="scripts/script.js"></script>
 </head>
 
 <body>
+
+  <!-- TODO include category filter -->
+  <!-- TODO "auto" pick for me from selection -->
+  <!-- TODO list view -->
+  <!-- TODO view toggle -->
+  <!-- TODO sorting feature -->
+  <!-- TODO create "sharable" link, using filters so you can auto go to the filters selected -->
+  <!-- TODO add loading indicator -->
+
   <div ng-controller="bggCtrl" class="container-fluid">
     <!-- Get the games -->
-    <div id="top" class="">
+    <div id="intro" class="">
       <h1>Board Game Decision Assistant</h1>
 
-      <p>Unsure of what game to play? Filter your&nbsp;<a href="https://www.boardgamegeek.com/">Board Game Geek</a>&nbsp;game collection based on your particular criteria.</p>
+      <p>Unsure of what game to play? Filter your&nbsp;<a href="https://www.boardgamegeek.com/">Board Game
+          Geek</a>&nbsp;game collection based on your current needs.</p>
 
       <div class="">
         <label for="username">First, enter a BoardGameBeek username:&nbsp;</label>
         <input ng-model="username" type="text" placeholder="username"></input>
       </div>
 
-      Then, click this button!&nbsp;<button id="refresh" class="btn btn-success" ng-click="callBGG()">Find some games</button>
+      Then, click this button!&nbsp;<button id="refresh" class="btn btn-success" ng-click="callBGG()">Find some
+        games</button>
     </div>
 
-    <!-- Display and filter the games -->
-    <div id="mid" class="row">
-      <div id="filters" class="col-md-2 col-sm-5 col-xs-12">
+    <!-- Filter the games -->
+    <div class="row">
+      <div id="filters" class="col-md-1">
         <h5>Filters</h5>
         <p>
-          Number of players:&nbsp;
+          Players:&nbsp;
           <select id="numPlayers" name="players" ng-model="numPlayers">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -50,54 +61,47 @@
         </p>
 
         <p>
-          Minimum Level of Complexity:&nbsp;{{complexityMin}}
+          <span title="Complexity at least of this difficulty">Min Complexity:&nbsp;{{complexityMin}}</span>
           <div slider id="complexityMin" ng-model="complexityMin"></div>
         </p>
 
         <p>
-          Maximum Level of Complexity:&nbsp;{{complexityMax}}
+          <span title="Complexity no more than this difficulty"></span>Max Complexity:&nbsp;{{complexityMax}}</span>
           <div slider id="complexityMax" ng-model="complexityMax"></div>
         </p>
 
         <p>
-          Time Available:&nbsp;{{timeDisplay}}
+          <span title="Playtime no longer than this length"></span>Length:&nbsp;{{timeDisplay}}</span>
           <div slider id="time" ng-model="time"></div>
         </p>
 
         <p>
-          Include Expansions:&nbsp;
+          <span title="Include expansions in the collection?">Expansions:&nbsp;</span>
           <input type="checkbox" id="expansions" name="expansions" ng-model="expansions">
         </p>
-
-        <!-- TODO include personal rating filter -->
-        <!-- TODO include category filter -->
-        <!-- TODO "auto" pick for me from selection -->
-        <!-- TODO sorting feature -->
-
       </div>
 
-      <!-- TODO create "sharable" link -->
-
-      <div id="results" class="col-md-10 col-sm-7 col-xs-12">
-        <div ng-if="collection.length > 0" class="game col-md-3 col-sm-6 col-xs-12"
+      <!-- Display the games -->
+      <div id="results" class="col-md-11">
+        <div ng-if="collection.length > 0" class="game col-md-2 col-sm-4 col-xs-6"
           ng-repeat="game in collection | filterGames:numPlayers:complexityMax:complexityMin:time:expansions">
           <div ng-if="game.thumb"><img src="{{game.thumb}}" class=""></div>
 
           <div class="">
-            Name: <strong>{{game.name}}</strong><br />
+            <strong>{{game.name}}</strong><br />
             Number of Players: <span
               ng-if="game.minPlayers == game.maxPlayers"><strong>{{game.minPlayers}}</strong></span><span
               ng-if="game.minPlayers != game.maxPlayers"><strong>{{game.minPlayers}} -
                 {{game.maxPlayers}}</strong></span><br />
             Time to Play: <span ng-if="game.minTime == game.maxTime"><strong>{{game.minTime}}</strong></span><span
               ng-if="game.minTime != game.maxTime"><strong>{{game.minTime}} - {{game.maxTime}}</strong></span>
-            minutes<br />
+            min<br />
             Complexity: <strong>{{game.complexity}}</strong><br />
           </div>
         </div ng-if="collection.length > 0">
       </div>
-    </div>
 
+    </div>
   </div>
 </body>
 

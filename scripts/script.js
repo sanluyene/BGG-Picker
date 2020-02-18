@@ -208,11 +208,14 @@ bgApp.directive('slider', function () {
         var value = jQuery(element).slider("value");
         ngModel.$setViewValue(value);
         if (jQuery(element).context.id == 'time') {
-           var hours = Math.floor(value / 60);  
-           var minutes = value % 60;
-           if (hours > 0) scope.timeDisplay = hours + " hours and " + minutes + " minutes";
-           else scope.timeDisplay = minutes + " minutes";
-         }
+          scope.timeDisplay = '';
+          var hours = Math.floor(value / 60);
+          var minutes = value % 60;
+
+          //  if (hours == 1) scope.timeDisplay = hours + " hour";
+          if (hours > 0) scope.timeDisplay = hours + " H";
+          if (minutes > 0) scope.timeDisplay += " " + minutes + " M";
+        }
       }
     }
   };

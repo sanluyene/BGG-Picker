@@ -1,0 +1,52 @@
+// Variables
+$gray: #f0efef;
+$green: #ddeedd;
+$blue: #c2d4dd;
+$purple: #b0aac0;
+$black: #000;
+$white: #fff;
+
+body {
+    color: $black;
+    background-color: $gray;
+    font-size: .875em;
+}
+
+// Button
+.btn {
+    background-color: $green;
+    color: $black;
+}
+
+// Main Divs
+#intro {
+    padding: 15px;
+	background-color: $blue;
+	margin-left: -15px;
+    margin-right: -15px;
+}
+
+#filters {
+    padding-top: 15px;
+    padding-right: 10px;
+    padding-left: 10px;
+    background-color: $purple;
+    // color: $white;
+}
+
+#results {
+    padding-top: 15px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.game {
+	padding: 3px;
+	text-align: center;
+}
+
+// Slider Selector
+.ui-state-active, .ui-widget-content .ui-state-active {
+    background-color: $blue;
+}

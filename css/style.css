@@ -1,0 +1,35 @@
+body {
+  color: #000;
+  background-color: #f0efef;
+  font-size: .875em; }
+
+.btn {
+  background-color: #ddeedd;
+  color: #000; }
+
+#intro {
+  padding: 15px;
+  background-color: #c2d4dd;
+  margin-left: -15px;
+  margin-right: -15px; }
+
+#filters {
+  padding-top: 15px;
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #b0aac0; }
+
+#results {
+  padding-top: 15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; }
+
+.game {
+  padding: 3px;
+  text-align: center; }
+
+.ui-state-active, .ui-widget-content .ui-state-active {
+  background-color: #c2d4dd; }
+
+/*# sourceMappingURL=style.css.map */
