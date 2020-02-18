@@ -124,7 +124,7 @@ bgApp.controller("bggCtrl", function ($scope, $http) {
 });
 
 bgApp.filter('filterGames', function () {
-  return function (items, numPlayers, complexity, time, expansions) {
+  return function (items, numPlayers, complexityMax, complexityMin, time, expansions) {
     var newItems = [];
 
     for (var i = 0; i < items.length; i++) {
@@ -135,13 +135,13 @@ bgApp.filter('filterGames', function () {
       if (numPlayers < parseInt(items[i].minPlayers) || numPlayers > parseInt(items[i].maxPlayers)) keep = false;
 
       // Check if the game meets complexity limits
-      if (complexity < parseFloat(items[i].complexity)) keep = false;
+      if (complexityMin > parseFloat(items[i].complexity) || complexityMax < parseFloat(items[i].complexity)) keep = false;
 
       // Check if the game meets time restrictions
-      if (time < parseInt(items[i].maxTime)) keep = false;
+      if (time < parseInt(items[i].minTime)) keep = false;
 
       if (!expansions && items[i].gameType == "boardgameexpansion") keep = false;
-      
+
       if (keep) newItems.push(items[i]);
     };
 
@@ -156,8 +156,20 @@ bgApp.directive('slider', function () {
     link: function (scope, element, attrs, ngModel) {
       if (!ngModel) return; // do nothing if no ng-model
 
-      // Initialize complexity slider and setup change event to enable updating the value
-      if (jQuery(element).context.id == 'complexity') {
+      // Initialize complexity sliders and setup change event to enable updating the value
+      if (jQuery(element).context.id == 'complexityMin') {
+        jQuery(element).slider({
+          min: 1,
+          max: 5,
+          step: 0.01,
+          value: 1,
+          animate: true,
+          'change': function () {
+            scope.$evalAsync(setModelValue);
+          }
+        });
+      }
+      if (jQuery(element).context.id == 'complexityMax') {
         jQuery(element).slider({
           min: 1,
           max: 5,
@@ -175,7 +187,7 @@ bgApp.directive('slider', function () {
         jQuery(element).slider({
           min: 0,
           max: 300,
-          step: 5,
+          step: 15,
           value: 300,
           animate: true,
           'change': function () {
@@ -195,6 +207,12 @@ bgApp.directive('slider', function () {
       function setModelValue() {
         var value = jQuery(element).slider("value");
         ngModel.$setViewValue(value);
+        if (jQuery(element).context.id == 'time') {
+           var hours = Math.floor(value / 60);  
+           var minutes = value % 60;
+           if (hours > 0) scope.timeDisplay = hours + " hours and " + minutes + " minutes";
+           else scope.timeDisplay = minutes + " minutes";
+         }
       }
     }
   };
