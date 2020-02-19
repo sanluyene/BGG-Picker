@@ -97,10 +97,11 @@ bgApp.controller("bggCtrl", function ($scope, $http) {
   //$scope.username = $cookies.get('username');
 
   $scope.callBGG = function () {
+    $scope.collection = []
     if ($scope.username == null) alert('Please enter a username.');
     else {
       //$cookies.put('username', $scope.username);
-      $scope.urlIds = 'https://www.boardgamegeek.com/xmlapi2/collection?username=' + $scope.username;
+      $scope.urlIds = 'https://www.boardgamegeek.com/xmlapi2/collection?own=1&username=' + $scope.username;
       $scope.header = {};
 
       $http({

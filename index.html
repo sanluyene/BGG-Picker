@@ -18,7 +18,9 @@
 
 <body>
 
+  <!-- TODO save entered data/selected criteria upon refresh https://www.w3schools.com/html/html5_webstorage.asp -->
   <!-- TODO include category filter -->
+  <!-- TODO if the main game is not in the selection, and you have expansions selected, do not show the associated expansions -->
   <!-- TODO "auto" pick for me from selection -->
   <!-- TODO list view -->
   <!-- TODO view toggle -->
@@ -35,7 +37,7 @@
           Geek</a>&nbsp;game collection based on your current needs.</p>
 
       <div class="">
-        <label for="username">First, enter a BoardGameBeek username:&nbsp;</label>
+        <label for="username">First, enter a BoardGameGeek username:&nbsp;</label>
         <input ng-model="username" type="text" placeholder="username"></input>
       </div>
 
@@ -85,7 +87,7 @@
       <div id="results" class="col-md-11">
         <div ng-if="collection.length > 0" class="game col-md-2 col-sm-4 col-xs-6"
           ng-repeat="game in collection | filterGames:numPlayers:complexityMax:complexityMin:time:expansions">
-          <div ng-if="game.thumb"><img src="{{game.thumb}}" class=""></div>
+          <div><a href="https://www.boardgamegeek.com/boardgame/{{game.id}}" target="_blank"><img ng-if="game.thumb" src="{{game.thumb}}" class=""></a></div>
 
           <div class="">
             <strong>{{game.name}}</strong><br />
