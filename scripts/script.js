@@ -97,6 +97,8 @@ bgApp.controller("bggCtrl", function ($scope, $http) {
   //$scope.username = $cookies.get('username');
 
   $scope.callBGG = function () {
+    var game_worker;
+    game_worker = new Worker("scripts/game_worker.js");
     $scope.collection = []
     if ($scope.username == null) alert('Please enter a username.');
     else {
@@ -113,10 +115,25 @@ bgApp.controller("bggCtrl", function ($scope, $http) {
         $scope.xml = $.parseXML(response.data);
         $scope.jqX = $($scope.xml);
         $scope.jqX.find('item').each(function () {
+          $scope.collection.push({
+            'id' : $(this).attr('objectid'),
+            'url' : 'https://www.boardgamegeek.com/xmlapi2/thing?id=' + $(this).attr('objectid') + '&stats=1'
+          });
           //console.log($(this).attr('objectid'));
-          $scope.game = new Game($(this).attr('objectid'));
-          $scope.collection.push($scope.game);
+          // $scope.game = new Game($(this).attr('objectid'));
+          // $scope.collection.push($scope.game);
         });
+
+
+
+        // $scope.xml = $.parseXML(response.data);
+        // $scope.jqX = $($scope.xml);
+        game_worker.addEventListener('message', function (e) {
+          console.log('Worker said: ', e.data);
+        }, false);
+        game_worker.postMessage($scope.collection);
+
+
       }, function failure(response) {
         alert("Something went wrong.");
       });
@@ -221,55 +238,3 @@ bgApp.directive('slider', function () {
     }
   };
 });
-
-class Game {
-  constructor(objectid) {
-    var name = '';
-    var minPlayers = '';
-    var maxPlayers = '';
-    var minTime = '';
-    var maxTime = '';
-    var complexity = '';
-    var thumb = '';
-    var gameType = '';
-
-    this.id = objectid;
-    this.url = 'https://www.boardgamegeek.com/xmlapi2/thing?id=' + objectid + '&stats=1';
-    this.header = {};
-
-    $.ajax({
-      type: "GET",
-      url: this.url,
-      headers: this.header,
-      async: false,
-      dataType: 'xml',
-      success: function success(response) {
-        // console.log(response);
-        // console.log($(response).find("items").children('item').find('statistics').find('ratings').find('averageweight').attr('value'));
-
-        name = $(response).find("items").children('item').find('name').attr('value');
-        minPlayers = $(response).find("items").children('item').find('minplayers').attr('value');
-        maxPlayers = $(response).find("items").children('item').find('maxplayers').attr('value');
-        minTime = $(response).find("items").children('item').find('minplaytime').attr('value');
-        maxTime = $(response).find("items").children('item').find('maxplaytime').attr('value');
-        complexity = $(response).find("items").children('item').find('statistics').find('ratings').find('averageweight').attr('value');
-        thumb = $(response).find("items").children('item').find('thumbnail').text();
-
-        // Denotes full game or expansion
-        gameType = $(response).find("items").children('item').attr('type');
-
-        // TODO get personal rating
-        // TODO get categories
-      }
-    });
-
-    this.name = name;
-    this.minPlayers = minPlayers;
-    this.maxPlayers = maxPlayers;
-    this.minTime = minTime;
-    this.maxTime = maxTime;
-    this.complexity = complexity;
-    this.thumb = thumb;
-    this.gameType = gameType;
-  }
-}
