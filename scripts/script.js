@@ -1,7 +1,7 @@
 var bgApp = angular.module("bggDecision", []);
 
 bgApp.controller("bggCtrl", function ($scope, $http) {
-  // Default values; some for testing
+  // Default values
   $scope.numPlayers = '4';
   $scope.username = 'sanluyene'; // Testing
 
@@ -96,56 +96,118 @@ bgApp.controller("bggCtrl", function ($scope, $http) {
   $scope.collection = [];
   //$scope.username = $cookies.get('username');
 
-  $scope.callBGG = function () {
-    $scope.collection = []
+  $scope.callBGG = async function () {
     if ($scope.username == null) alert('Please enter a username.');
     else {
-      //$cookies.put('username', $scope.username);
-      $scope.urlIds = 'https://www.boardgamegeek.com/xmlapi2/collection?own=1&username=' + $scope.username;
-      $scope.header = {};
-
-      $http({
-        method: 'GET',
-        url: $scope.urlIds,
-        headers: $scope.header,
-        timeout: 10000
-      }).then(function success(response) {
-        $scope.xml = $.parseXML(response.data);
-        $scope.jqX = $($scope.xml);
-        $scope.jqX.find('item').each(function () {
-          //console.log($(this).attr('objectid'));
-          $scope.game = new Game($(this).attr('objectid'));
-          $scope.collection.push($scope.game);
-        });
-      }, function failure(response) {
-        alert("Something went wrong.");
-      });
+      const collection = await $scope.GetCollection();
     }
-  };
+  }
+
+  $scope.GetCollection = function () {
+    //$cookies.put('username', $scope.username);
+    let urlIds = 'https://www.boardgamegeek.com/xmlapi2/collection?own=1&username=' + $scope.username;
+    let header = {};
+
+    $http({
+      method: 'GET',
+      url: urlIds,
+      headers: header,
+      timeout: 10000
+    }).then(function (response) {
+      if (response.status == 202) {
+        setTimeout(function () {
+          callBGG();
+        }, 3000)
+      } else if (response.status == 200) {
+        // Success
+        const xml = $.parseXML(response.data);
+        const jqX = $(xml);
+        jqX.find('item').each(function () {
+          $scope.collectionIds.push($(this).attr('objectid'));
+        });
+
+        return $scope.GetGames();
+      }
+    }, function (response) {
+      // Failure
+      console.log("Something went wrong.");
+      console.log(response);
+    });
+  }
+
+  $scope.GetGames = function () {
+    // After we've collected the Game IDs, we can get each of their details
+    const ids = Object.values($scope.collectionIds);
+    const id_string = ids.join();
+    const urlGs = 'https://www.boardgamegeek.com/xmlapi2/thing?id=' + id_string + '&stats=1';
+    let header = {};
+
+    $http({
+      method: 'GET',
+      url: urlGs,
+      headers: header,
+      timeout: 10000
+    }).then(function (response) {
+      if (response.status == 202) {
+        setTimeout(function () {
+          GetGames();
+        }, 3000)
+      } else if (response.status == 200) {
+        // Success
+        let xml = $.parseXML(response.data);
+        let jqX = $(xml);
+        jqX.find('item').each(function () {
+          let id = $(this).attr('objectid');
+          let url = 'https://www.boardgamegeek.com/xmlapi2/thing?id=' + id + '&stats=1';
+          let name = $(this).find('name').attr('value');
+          let minPlayers = $(this).find('minplayers').attr('value');
+          let maxPlayers = $(this).find('maxplayers').attr('value');
+          let minTime = $(this).find('minplaytime').attr('value');
+          let maxTime = $(this).find('maxplaytime').attr('value');
+          let complexity = $(this).find('statistics').find('ratings').find('averageweight').attr('value');
+          let thumb = $(this).find('thumbnail').text();
+
+          // Denotes full game or expansion
+          let gameType = $(this).attr('type');
+
+          // TODO get personal rating
+          // TODO get categories
+
+          let game = new Game(id, url, name, minPlayers, maxPlayers, minTime, maxTime, complexity, thumb, gameType);
+          $scope.collection.push(game);
+        })
+      }
+    }, function (response) {
+      // Failure
+      console.log("Something went wrong.");
+      console.log(response);
+    });
+  }
 });
 
 bgApp.filter('filterGames', function () {
   return function (items, numPlayers, complexityMax, complexityMin, time, expansions) {
     var newItems = [];
+    if (items) {
 
-    for (var i = 0; i < items.length; i++) {
-      var keep = true;
-      if (expansions == undefined) expansions = false;
+      for (var i = 0; i < items.length; i++) {
+        var keep = true;
+        if (expansions == undefined) expansions = false;
 
-      // Check if the game supports the number of players
-      if (numPlayers < parseInt(items[i].minPlayers) || numPlayers > parseInt(items[i].maxPlayers)) keep = false;
+        // Check if the game supports the number of players
+        if (numPlayers < parseInt(items[i].minPlayers) || numPlayers > parseInt(items[i].maxPlayers)) keep = false;
 
-      // Check if the game meets complexity limits
-      if (complexityMin > parseFloat(items[i].complexity) || complexityMax < parseFloat(items[i].complexity)) keep = false;
+        // Check if the game meets complexity limits
+        if (complexityMin > parseFloat(items[i].complexity) || complexityMax < parseFloat(items[i].complexity)) keep = false;
 
-      // Check if the game meets time restrictions
-      if (time < parseInt(items[i].minTime)) keep = false;
+        // Check if the game meets time restrictions
+        if (time < parseInt(items[i].minTime)) keep = false;
 
-      if (!expansions && items[i].gameType == "boardgameexpansion") keep = false;
+        if (!expansions && items[i].gameType == "boardgameexpansion") keep = false;
 
-      if (keep) newItems.push(items[i]);
-    };
-
+        if (keep) newItems.push(items[i]);
+      };
+    }
     return newItems;
   }
 });
@@ -223,46 +285,9 @@ bgApp.directive('slider', function () {
 });
 
 class Game {
-  constructor(objectid) {
-    var name = '';
-    var minPlayers = '';
-    var maxPlayers = '';
-    var minTime = '';
-    var maxTime = '';
-    var complexity = '';
-    var thumb = '';
-    var gameType = '';
-
-    this.id = objectid;
-    this.url = 'https://www.boardgamegeek.com/xmlapi2/thing?id=' + objectid + '&stats=1';
-    this.header = {};
-
-    $.ajax({
-      type: "GET",
-      url: this.url,
-      headers: this.header,
-      async: false,
-      dataType: 'xml',
-      success: function success(response) {
-        // console.log(response);
-        // console.log($(response).find("items").children('item').find('statistics').find('ratings').find('averageweight').attr('value'));
-
-        name = $(response).find("items").children('item').find('name').attr('value');
-        minPlayers = $(response).find("items").children('item').find('minplayers').attr('value');
-        maxPlayers = $(response).find("items").children('item').find('maxplayers').attr('value');
-        minTime = $(response).find("items").children('item').find('minplaytime').attr('value');
-        maxTime = $(response).find("items").children('item').find('maxplaytime').attr('value');
-        complexity = $(response).find("items").children('item').find('statistics').find('ratings').find('averageweight').attr('value');
-        thumb = $(response).find("items").children('item').find('thumbnail').text();
-
-        // Denotes full game or expansion
-        gameType = $(response).find("items").children('item').attr('type');
-
-        // TODO get personal rating
-        // TODO get categories
-      }
-    });
-
+  constructor(id, url, name, minPlayers, maxPlayers, minTime, maxTime, complexity, thumb, gameType) {
+    this.id = id;
+    this.url = url;
     this.name = name;
     this.minPlayers = minPlayers;
     this.maxPlayers = maxPlayers;
