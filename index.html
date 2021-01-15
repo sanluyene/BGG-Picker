@@ -29,19 +29,16 @@
   <!-- TODO add loading indicator -->
 
   <div class="tab">
-    <button class="tablinks" onclick="openCity(event, 'London')">London</button>
-    <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
-    <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+    <button class="tablinks" onclick="openTab(event, 'bgg')">Board Games</button>
+    <button class="tablinks" onclick="openTab(event, 'steam')">Steam Games</button>
   </div>
-  
-  <div id="London" class="tabcontent">
-    <h3>London</h3>
-    <p>London is the capital city of England.</p>
+
+  <div id="bgg" class="tabcontent">
+    <div data-include="bgg"></div>
   </div>
-  
-  <div id="Paris" class="tabcontent">
-    <h3>Paris</h3>
-    <p>Paris is the capital of France.</p> 
+
+  <div id="steam" class="tabcontent">
+    <div data-include="steam"></div>
   </div>
 
 </body>
